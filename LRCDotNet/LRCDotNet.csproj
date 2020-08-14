@@ -2,6 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Copyright>Copyright (c) AioiLight</Copyright>
+    <Description>LyRiCs Parser for .NET</Description>
+    <Company />
+    <Authors>AioiLight</Authors>
+    <RepositoryUrl>https://github.com/AioiLight/LRCDotNet.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/AioiLight/LRCDotNet</PackageProjectUrl>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
