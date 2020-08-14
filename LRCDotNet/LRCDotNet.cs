@@ -12,10 +12,14 @@
 
             foreach (var line in lines)
             {
-                list.AddRange(Parser.GetLyrics(line));
+                var l = Parser.GetLyrics(line);
+                if (l != null)
+                {
+                    list.AddRange(l);
+                }
             }
 
-            list.Sort();
+            list.Sort((x, y) => x.CompareTo(y.Time));
 
             return result;
         }

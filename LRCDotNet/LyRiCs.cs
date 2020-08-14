@@ -5,6 +5,11 @@ namespace Space.AioiLight.LRCDotNet
 {
     public class LyRiCs
     {
+        public LyRiCs()
+        {
+            Lyrics = new List<Lyric>();
+        }
+
         public List<Lyric> Lyrics { get; internal set; }
     }
 

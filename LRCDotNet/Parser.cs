@@ -60,7 +60,7 @@ namespace Space.AioiLight.LRCDotNet
 
         internal static string GetText(string str)
         {
-            var i = str.IndexOf(']');
+            var i = str.LastIndexOf(']');
 
             if (i < 0)
             {
@@ -97,7 +97,8 @@ namespace Space.AioiLight.LRCDotNet
 
         internal static string GetTimesString(string str)
         {
-            return str.Substring(str.IndexOf('[') - 1, str.LastIndexOf(']'));
+            var index = str.IndexOf('[');
+            return str.Substring(index, str.LastIndexOf(']') + 1 - index);
         }
 
         private static readonly Regex FullTime = new Regex(@"\[(?<m>\d\d):(?<s>\d\d)[:.](?<x>\d\d)\]");
