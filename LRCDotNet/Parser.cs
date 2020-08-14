@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
+[assembly: InternalsVisibleToAttribute("LRCDotNetTest")]
 namespace Space.AioiLight.LRCDotNet
 {
     internal static class Parser
@@ -16,36 +16,91 @@ namespace Space.AioiLight.LRCDotNet
             return eolNormalize.Split(eol, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        internal static Lyric[] GetLyrics(string str)
+        {
+            if (!str.Contains('[') || !str.Contains(']'))
+            {
+                return null;
+            }
+
+            var eol = "\n";
+            var text = GetText(str);
+            // ] → ]\n して時間を分ける
+            var times = GetTimesString(str).Replace("]", $"]{eol}").Split(eol, StringSplitOptions.RemoveEmptyEntries);
+
+            var timespans = GetTimeSpans(times);
+
+            var results = new Lyric[timespans.Length];
+            for (int i = 0; i < results.Length; i++)
+            {
+                results[i] = new Lyric(timespans[i], text);
+            }
+
+            return results;
+        }
+
+        internal static TimeSpan[] GetTimeSpans(string[] times)
+        {
+            var results = new List<TimeSpan>(times.Length);
+
+            for (int i = 0; i < times.Length; i++)
+            {
+                try
+                {
+                    results.Add(GetTimeSpan(times[i]));
+                }
+                catch (Exception)
+                {
+                    // なにもしない。
+                }
+            }
+
+            return results.ToArray();
+        }
+
+        internal static string GetText(string str)
+        {
+            var i = str.IndexOf(']');
+
+            if (i < 0)
+            {
+                throw new FormatException();
+            }
+
+            if (str.Length <= i + 1)
+            {
+                throw new FormatException();
+            }
+
+            return str.Substring(i + 1);
+        }
+
         internal static TimeSpan GetTimeSpan(string str)
         {
-            // [, ] の数をカウントする
-            var countStartBrackets = str.Count(c => c == '[');
-            var countEndBrackets = str.Count(c => c == ']');
-
-            // 括弧の数が多すぎたり少なすぎたりしたら例外を投げる。
-            if (countStartBrackets != 1 || countEndBrackets != 1)
-            {
-                throw new ArgumentException();
-            }
-
-            // 括弧の数が一致しなくても例外を投げる。
-            if (countStartBrackets != countEndBrackets)
-            {
-                throw new ArgumentException();
-            }
-
-            var timeStr = str.Substring(str.IndexOf('['), str.Length - str.IndexOf(']'));
-
-            var result = Time.Match(timeStr);
+            var result = FullTime.Match(str);
 
             if (result.Success)
             {
                 return new TimeSpan(0, 0, int.Parse(result.Groups["m"].Value), int.Parse(result.Groups["s"].Value), int.Parse(result.Groups["x"].Value));
             }
+            else
+            {
+                result = ShortenTime.Match(str);
+                if (result.Success)
+                {
+                    return new TimeSpan(0, 0, int.Parse(result.Groups["m"].Value), int.Parse(result.Groups["s"].Value));
+                }
+            }
 
-            throw new ArgumentException();
+            throw new FormatException();
         }
 
-        private static readonly Regex Time = new Regex("(?<m>dd):(?<s>dd)[:.](?<x>dd)");
+        internal static string GetTimesString(string str)
+        {
+            return str.Substring(str.IndexOf('[') - 1, str.LastIndexOf(']'));
+        }
+
+        private static readonly Regex FullTime = new Regex(@"\[(?<m>\d\d):(?<s>\d\d)[:.](?<x>\d\d)\]");
+        private static readonly Regex ShortenTime = new Regex(@"\[(?<m>\d\d):(?<s>\d\d)\]");
     }
 }
