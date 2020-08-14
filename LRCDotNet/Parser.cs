@@ -81,7 +81,7 @@ namespace Space.AioiLight.LRCDotNet
 
             if (result.Success)
             {
-                return new TimeSpan(0, 0, int.Parse(result.Groups["m"].Value), int.Parse(result.Groups["s"].Value), int.Parse(result.Groups["x"].Value));
+                return new TimeSpan(0, 0, int.Parse(result.Groups["m"].Value), int.Parse(result.Groups["s"].Value), int.Parse(result.Groups["x"].Value) * 10);
             }
             else
             {
