@@ -11,22 +11,22 @@ namespace Space.AioiLight.LRCDotNet
         internal static string[] SplitLine(string str)
         {
             // \r\n \r を \n へ統一する
-            var eol = "\n";
-            var eolNormalize = str.Replace("\r\n", eol).Replace("\r", eol);
-            return eolNormalize.Split(eol, StringSplitOptions.RemoveEmptyEntries);
+            var eol = '\n';
+            var eolNormalize = str.Replace("\r\n", eol.ToString()).Replace("\r", eol.ToString());
+            return eolNormalize.Split(new char[] { eol }, options: StringSplitOptions.RemoveEmptyEntries);
         }
 
         internal static Lyric[] GetLyrics(string str)
         {
-            if (!str.Contains('[') || !str.Contains(']'))
+            if (!str.Contains("[") || !str.Contains("]"))
             {
                 return null;
             }
 
-            var eol = "\n";
+            var eol = '\n';
             var text = GetText(str);
             // ] → ]\n して時間を分ける
-            var times = GetTimesString(str).Replace("]", $"]{eol}").Split(eol, StringSplitOptions.RemoveEmptyEntries);
+            var times = GetTimesString(str).Replace("]", $"]{eol}").Split(new char[] { eol }, options: StringSplitOptions.RemoveEmptyEntries);
 
             var timespans = GetTimeSpans(times);
 

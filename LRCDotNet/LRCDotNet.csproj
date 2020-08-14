@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net40</TargetFrameworks>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Copyright>Copyright (c) AioiLight</Copyright>
     <Description>LyRiCs Parser for .NET</Description>
@@ -11,6 +11,7 @@
     <PackageProjectUrl>https://github.com/AioiLight/LRCDotNet</PackageProjectUrl>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

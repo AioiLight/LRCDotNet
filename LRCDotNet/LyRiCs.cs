@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Space.AioiLight.LRCDotNet
 {
@@ -18,7 +17,7 @@ namespace Space.AioiLight.LRCDotNet
             Text = text;
         }
 
-        public int CompareTo([AllowNull] TimeSpan other)
+        public int CompareTo(TimeSpan other)
         {
             return Time.CompareTo(other);
         }
