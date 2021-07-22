@@ -29,7 +29,7 @@ namespace Space.AioiLight.LRCDotNet
 
         public override string ToString()
         {
-            var t = Time.ToString("[mm:ss.ff]");
+            var t = Time.ToString("[mm:ss:ff]");
             return $"{t}{Text}";
         }
 
