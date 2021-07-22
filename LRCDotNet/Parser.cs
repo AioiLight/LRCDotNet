@@ -8,9 +8,13 @@ namespace Space.AioiLight.LRCDotNet
 {
     internal static class Parser
     {
+        /// <summary>
+        /// \r\n \r を \n へ統一する
+        /// </summary>
+        /// <param name="str">統一したい文字列。</param>
+        /// <returns>統一後の文字列</returns>
         internal static string[] SplitLine(string str)
         {
-            // \r\n \r を \n へ統一する
             var eol = '\n';
             var eolNormalize = str.Replace("\r\n", eol.ToString()).Replace("\r", eol.ToString());
             return eolNormalize.Split(new char[] { eol }, options: StringSplitOptions.RemoveEmptyEntries);
