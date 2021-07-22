@@ -71,7 +71,7 @@ namespace Space.AioiLight.LRCDotNet
             {
                 var m = int.Parse(result.Groups["m"].Value);
                 var s = int.Parse(result.Groups["s"].Value);
-                // 1/100 ミリ秒が欲しいため、桁数が足りなければ0で埋める。
+                // 1/1000 ミリ秒が欲しいため、桁数が足りなければ0で埋める。
                 var x = int.Parse(result.Groups["x"].Value.PadRight(3, '0'));
                 return new TimeSpan(0, 0, m, s, x);
             }
