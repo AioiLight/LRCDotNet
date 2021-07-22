@@ -12,10 +12,10 @@
 
             foreach (var line in lines)
             {
-                var l = Parser.GetLyrics(line);
+                var l = Parser.GetLyric(line);
                 if (l != null)
                 {
-                    list.AddRange(l);
+                    list.Add(l);
                 }
             }
 

@@ -20,63 +20,42 @@ namespace Space.AioiLight.LRCDotNet
             return eolNormalize.Split(new char[] { eol }, options: StringSplitOptions.RemoveEmptyEntries);
         }
 
-        internal static Lyric[] GetLyrics(string str)
+        /// <summary>
+        /// 1行の文字列から、歌詞を生成する。
+        /// </summary>
+        /// <param name="str">1行の文字列。</param>
+        /// <returns>歌詞。正しくパースできない場合、null を返す。</returns>
+        internal static Lyric GetLyric(string str)
         {
+            // タイムコードである [ ] のどちらかがなければ、歌詞として認めない。
             if (!str.Contains("[") || !str.Contains("]"))
             {
                 return null;
             }
 
-            var eol = '\n';
-            var text = GetText(str);
-            // ] → ]\n して時間を分ける
-            var times = GetTimesString(str).Replace("]", $"]{eol}").Split(new char[] { eol }, options: StringSplitOptions.RemoveEmptyEntries);
-
-            var timespans = GetTimeSpans(times);
-
-            var results = new Lyric[timespans.Length];
-            for (int i = 0; i < results.Length; i++)
+            try
             {
-                results[i] = new Lyric(timespans[i], text);
-            }
+                var lyric = GetLyricString(str);
+                var timeSpan = GetTimeSpan(GetTimeString(str));
 
-            return results;
+                return new Lyric(timeSpan, lyric ?? "");
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
         }
 
-        internal static TimeSpan[] GetTimeSpans(string[] times)
+        /// <summary>
+        /// 歌詞を取得する。
+        /// </summary>
+        /// <param name="str">歌詞。</param>
+        /// <returns>歌詞。ない場合nullを返す。</returns>
+        internal static string GetLyricString(string str)
         {
-            var results = new List<TimeSpan>(times.Length);
+            var lyric = Time.Replace(str.Substring(str.IndexOf('[')), "", 1);
 
-            for (int i = 0; i < times.Length; i++)
-            {
-                try
-                {
-                    results.Add(GetTimeSpan(times[i]));
-                }
-                catch (Exception)
-                {
-                    // なにもしない。
-                }
-            }
-
-            return results.ToArray();
-        }
-
-        internal static string GetText(string str)
-        {
-            var i = str.LastIndexOf(']');
-
-            if (i < 0)
-            {
-                throw new FormatException();
-            }
-
-            if (str.Length <= i + 1)
-            {
-                throw new FormatException();
-            }
-
-            return str.Substring(i + 1);
+            return !string.IsNullOrWhiteSpace(lyric) ? lyric.Trim() : null;
         }
 
         /// <summary>
@@ -110,12 +89,13 @@ namespace Space.AioiLight.LRCDotNet
             throw new FormatException();
         }
 
-        internal static string GetTimesString(string str)
+        internal static string GetTimeString(string str)
         {
-            var index = str.IndexOf('[');
-            return str.Substring(index, str.LastIndexOf(']') + 1 - index);
+            var i = str.IndexOf('[');
+            return str.Substring(i, str.IndexOf(']') + 1 - i);
         }
 
+        private static readonly Regex Time = new Regex(@"\[(?<m>\d+):(?<s>\d+)([:.](?<x>\d+))*\]");
         private static readonly Regex FullTime = new Regex(@"\[(?<m>\d+):(?<s>\d+)[:.](?<x>\d+)\]");
         private static readonly Regex ShortenTime = new Regex(@"\[(?<m>\d+):(?<s>\d+)\]");
     }
