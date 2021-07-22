@@ -79,20 +79,31 @@ namespace Space.AioiLight.LRCDotNet
             return str.Substring(i + 1);
         }
 
+        /// <summary>
+        /// 文字列から時間を返す。
+        /// </summary>
+        /// <param name="str">文字列。</param>
+        /// <returns>TimeSpan。</returns>
         internal static TimeSpan GetTimeSpan(string str)
         {
             var result = FullTime.Match(str);
 
             if (result.Success)
             {
-                return new TimeSpan(0, 0, int.Parse(result.Groups["m"].Value), int.Parse(result.Groups["s"].Value), int.Parse(result.Groups["x"].Value) * 10);
+                var m = int.Parse(result.Groups["m"].Value);
+                var s = int.Parse(result.Groups["s"].Value);
+                // 1/100 ミリ秒が欲しいため、桁数が足りなければ0で埋める。
+                var x = int.Parse(result.Groups["x"].Value.PadRight(3, '0'));
+                return new TimeSpan(0, 0, m, s, x);
             }
             else
             {
                 result = ShortenTime.Match(str);
                 if (result.Success)
                 {
-                    return new TimeSpan(0, 0, int.Parse(result.Groups["m"].Value), int.Parse(result.Groups["s"].Value));
+                    var m = int.Parse(result.Groups["m"].Value);
+                    var s = int.Parse(result.Groups["s"].Value);
+                    return new TimeSpan(0, 0, m, s);
                 }
             }
 
@@ -105,7 +116,7 @@ namespace Space.AioiLight.LRCDotNet
             return str.Substring(index, str.LastIndexOf(']') + 1 - index);
         }
 
-        private static readonly Regex FullTime = new Regex(@"\[(?<m>\d\d):(?<s>\d\d)[:.](?<x>\d\d)\]");
-        private static readonly Regex ShortenTime = new Regex(@"\[(?<m>\d\d):(?<s>\d\d)\]");
+        private static readonly Regex FullTime = new Regex(@"\[(?<m>\d+):(?<s>\d+)[:.](?<x>\d+)\]");
+        private static readonly Regex ShortenTime = new Regex(@"\[(?<m>\d+):(?<s>\d+)\]");
     }
 }
